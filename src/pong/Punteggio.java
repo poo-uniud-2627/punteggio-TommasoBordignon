@@ -17,7 +17,19 @@ import java.util.List;
  * Ogni metodo ha il suo contratto, nel commento sopra: cosa pretende, cosa promette.
  * I test ufficiali (cartella test) controllano i contratti.
  */
+enum Lato {SINISTRA, DESTRA}
+
 public class Punteggio {
+
+    private int puntiPerVincere;
+    private int scartoMinimo;
+    private boolean finita;
+    private int puntiSinistra;
+    private int puntiDestra;
+    private Lato vincitore;
+    private List<Lato> storia;
+
+
 
     // scrivete qui i campi che vi servono
 
@@ -27,7 +39,9 @@ public class Punteggio {
      * Promette: una partita 0 a 0, non finita, senza vincitore e con la storia vuota.
      */
     public Punteggio(int puntiPerVincere, int scartoMinimo) {
-        // scrivete qui
+        this.puntiPerVincere = puntiPerVincere;
+        this.scartoMinimo = scartoMinimo;
+        this.storia = new ArrayList<>();
     }
 
     /**
@@ -39,7 +53,29 @@ public class Punteggio {
      *           Se la partita era già finita, non cambia niente.
      */
     public void segnaPunto(Lato chi) {
-        // scrivete qui
+        if(chi != null){
+            if (isFinita()) {
+                return;
+            } else {
+                storia.add(chi);
+                if (chi == Lato.DESTRA) {
+                    puntiDestra++;
+                } else {
+                    puntiSinistra++;
+                }
+
+                if (puntiDestra >= puntiPerVincere && puntiDestra-puntiSinistra >= scartoMinimo) {
+                    finita = true;
+                    vincitore = Lato.DESTRA;
+                }
+                if (puntiSinistra >= puntiPerVincere && puntiSinistra-puntiDestra >=scartoMinimo) {
+                    finita=true;
+                    vincitore = Lato.SINISTRA;
+                }
+            }    
+        }else{
+            return;
+        }
     }
 
     /**
@@ -47,21 +83,25 @@ public class Punteggio {
      * Promette: i punti del lato chi. Non cambia niente.
      */
     public int getPunti(Lato chi) {
-        return 0; // scrivete qui
+        if(chi!=null){
+            return chi == Lato.SINISTRA ? puntiSinistra : puntiDestra;
+        }else{
+            return -1;
+        }
     }
 
     /**
      * Promette: vero se la partita è finita, cioè se un lato ha vinto. Non cambia niente.
      */
     public boolean isFinita() {
-        return false; // scrivete qui
+        return finita; // scrivete qui
     }
 
     /**
      * Promette: il lato che ha vinto; null se la partita non è finita. Non cambia niente.
      */
     public Lato getVincitore() {
-        return null; // scrivete qui
+        return vincitore; // scrivete qui
     }
 
     /**
@@ -74,6 +114,33 @@ public class Punteggio {
      */
     public void annullaUltimoPunto() {
         // scrivete qui
+
+
+            if(storia.size() > 0){
+                
+                if (storia.get(storia.size() - 1) == Lato.DESTRA) {
+                    if( isFinita() ){
+                        finita=false;
+                        vincitore = null;
+                    }
+                    puntiDestra--;
+                    storia.remove(storia.size() - 1);
+                    return ;
+                }
+                if (storia.get(storia.size() - 1) == Lato.SINISTRA) {
+                    if (isFinita()) {
+                        finita = false;
+                        vincitore = null;
+                    }
+                    puntiSinistra--;
+                    storia.remove(storia.size() - 1);
+                    return ;
+                }
+            }
+
+        
+
+
     }
 
     /**
@@ -87,7 +154,7 @@ public class Punteggio {
      *           segnati dopo; chi la usa non deve contare né sull'una né sull'altra cosa.
      */
     public List<Lato> getStoria() {
-        return new ArrayList<>(); // scrivete qui
+        return List.copyOf(storia); // scrivete qui
     }
 
     /**
@@ -96,6 +163,10 @@ public class Punteggio {
      * Promette: 0 a 0, non finita, senza vincitore, storia vuota; la regola per vincere non cambia.
      */
     public void azzera() {
-        // scrivete qui
+        storia = new ArrayList<>();
+        puntiDestra=0;
+        puntiSinistra=0;
+        vincitore = null;
+        finita=false;
     }
 }
