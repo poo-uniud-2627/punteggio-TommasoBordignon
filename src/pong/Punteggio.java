@@ -17,7 +17,7 @@ import java.util.List;
  * Ogni metodo ha il suo contratto, nel commento sopra: cosa pretende, cosa promette.
  * I test ufficiali (cartella test) controllano i contratti.
  */
-enum Lato {SINISTRA, DESTRA}
+
 
 public class Punteggio {
 
